@@ -13,7 +13,7 @@
         - Report Info: Global/US/UK disabled traveler numbers. Goal: Inform/Compare. Viz: Interactive data cards & a line chart (Chart.js). Interaction: Hover effects, tooltips. Justification: Quickly conveys scale and change over time.
         - Report Info: Breakdown of assistance types. Goal: Organize/Proportion. Viz: Doughnut chart (Chart.js). Interaction: Tooltips on segments. Justification: Clearly shows the large proportion of "less mobile/elderly" requests.
         - Report Info: Prevalence of non-visible disabilities. Goal: Inform/Surprise. Viz: Donut chart. Interaction: Tooltips. Justification: Highlights the hidden majority of disabilities, a key report insight.
-        - Report Info: Systemic issues (outsourcing, low wages). Goal: Explain Relationships. Viz: HTML/CSS diagram. Interaction: Hover over steps. Justification: Visually simplifies a complex, cyclical problem.
+        - Report Info: Systemic issues (outsourcing, low wages). Goal: Explain Relationships. Viz: HTML/CSS diagram. Interaction: Click on steps. Justification: Visually simplifies a complex, cyclical problem, now accessible via click.
         - Report Info: High complaint volumes & fear of travel. Goal: Emphasize Impact. Viz: Large data callouts with icons (HTML/CSS). Interaction: Static, high-impact visuals. Justification: Creates a strong impression of the severity of the issues.
         - Report Info: Recommendations. Goal: Organize/Summarize. Viz: Accordion UI. Interaction: Click to expand. Justification: Condenses detailed text into a manageable format.
         Library/Method: All charts use Chart.js (Canvas). All diagrams and icons use HTML/CSS/Unicode. -->
@@ -26,6 +26,7 @@
         .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
         .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
         .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        .cycle-step { cursor: pointer; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -124,7 +125,7 @@
             
             <div class="bg-white p-8 rounded-xl shadow-lg mb-12">
                 <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">The Vicious Cycle of Outsourced Services</h3>
-                <p class="text-center text-gray-600 mb-8">The report identifies a critical cycle where cost-cutting leads directly to poor service, undermining passenger safety and dignity. Hover over each step to learn more.</p>
+                <p class="text-center text-gray-600 mb-8">The report identifies a critical cycle where cost-cutting leads directly to poor service, undermining passenger safety and dignity. Click on each step to learn more.</p>
                 <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
                     <div class="cycle-step text-center p-4 relative" data-text="Airlines outsource assistance to the lowest bidder to cut costs.">
                         <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Outsourcing & Cost Pressure</div>
@@ -145,7 +146,7 @@
                          <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Poor Service & Passenger Harm</div>
                     </div>
                 </div>
-                <div id="cycle-tooltip" class="hidden absolute bg-gray-800 text-white text-sm rounded py-2 px-3"></div>
+                <div id="cycle-tooltip" class="hidden fixed bg-gray-800 text-white text-sm rounded py-2 px-3 z-50"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -167,15 +168,15 @@
                     <div class="space-y-4">
                         <div class="flex items-center">
                             <div class="w-1/2 bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">48%</div>
-                            <div class="w-1/2 bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Failure to Provide Adequate Wheelchair Assistance</div>
+                            <div class="w-1/2 bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Inadequate W/C Assist.</div>
                         </div>
                          <div class="flex items-center">
                             <div class="w-[10%] bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">10%</div>
-                            <div class="w-[90%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Mishandling of Assistive Devices</div>
+                            <div class="w-[90%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Mishandling Devices</div>
                         </div>
                          <div class="flex items-center">
                             <div class="w-[42%] bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">42%</div>
-                            <div class="w-[58%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Other (e.g., seating, communication)</div>
+                            <div class="w-[58%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Other Complaints</div>
                         </div>
                     </div>
                 </div>
@@ -239,7 +240,7 @@
                          <span class="accordion-icon text-2xl font-thin">+</span>
                     </button>
                     <div class="accordion-content px-4 pb-4 text-gray-600">
-                        <p>Ensure all essential flight and airport information is available in multiple formats (visual, audio, clear signage). Simplify online processes for requesting accommodations and proactively inform passengers about the full range of available services.</p>
+                        <p>Ensure all essential flight and airport information is available in multiple formats (visual, audio, clear signage). Simplify online processes for communicating accommodation needs and proactively inform passengers about the full range of available services.</p>
                     </div>
                 </div>
                 <div class="accordion-item bg-white rounded-lg shadow-md">
@@ -305,7 +306,7 @@
                 data: {
                     labels: ['2010', '2015', '2019', '2022'],
                     datasets: [{
-                        label: 'Passengers Receiving Assistance in UK (Millions)',
+                        label: 'UK Assisted Passengers (M)', 
                         data: [1.85, 2.7, null, 3.45], 
                         borderColor: '#3b82f6',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -314,7 +315,7 @@
                         pointRadius: 5,
                         pointBackgroundColor: '#3b82f6'
                     },{
-                        label: '% of All Passengers',
+                        label: '% Total Passengers',
                         data: [0.94, null, 1.35, 1.56],
                         yAxisID: 'y1',
                         borderColor: '#9ca3af',
@@ -330,13 +331,13 @@
                      scales: {
                         y: {
                             beginAtZero: true,
-                            title: { display: true, text: 'Passengers (Millions)' }
+                            title: { display: true, text: 'Assisted Passengers (M)' }
                         },
                         y1: {
                             type: 'linear',
                             display: true,
                             position: 'right',
-                            title: { display: true, text: '% of All Passengers' },
+                            title: { display: true, text: '% Total Passengers' },
                              grid: { drawOnChartArea: false }
                         }
                     },
@@ -399,18 +400,70 @@
 
             const cycleSteps = document.querySelectorAll('.cycle-step');
             const tooltip = document.getElementById('cycle-tooltip');
+            let currentActiveStep = null; // Track which step's tooltip is currently active
+
             cycleSteps.forEach(step => {
-                step.addEventListener('mouseenter', (e) => {
-                    tooltip.textContent = step.dataset.text;
-                    tooltip.classList.remove('hidden');
-                    const rect = step.getBoundingClientRect();
-                    tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`;
-                    tooltip.style.top = `${rect.bottom + window.scrollY + 10}px`;
-                });
-                step.addEventListener('mouseleave', () => {
-                    tooltip.classList.add('hidden');
+                step.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent document click from immediately closing
+
+                    if (currentActiveStep === step) {
+                        // If the same step is clicked, close the tooltip
+                        tooltip.classList.add('hidden');
+                        currentActiveStep = null;
+                    } else {
+                        // Otherwise, open the tooltip for the clicked step
+                        tooltip.textContent = step.dataset.text;
+                        tooltip.classList.remove('hidden');
+
+                        const rect = step.getBoundingClientRect();
+                        // Position the tooltip relative to the viewport (fixed position)
+                        tooltip.style.left = `${rect.left + (rect.width / 2) - (tooltip.offsetWidth / 2)}px`;
+                        tooltip.style.top = `${rect.bottom + 10}px`;
+
+                        // Basic check to keep tooltip within viewport bounds
+                        if (parseFloat(tooltip.style.left) < 0) {
+                            tooltip.style.left = '0px';
+                        }
+                        if (parseFloat(tooltip.style.left) + tooltip.offsetWidth > window.innerWidth) {
+                            tooltip.style.left = `${window.innerWidth - tooltip.offsetWidth}px`;
+                        }
+                        // If the tooltip goes below the viewport, try to position it above the element
+                        if (parseFloat(tooltip.style.top) + tooltip.offsetHeight > window.innerHeight && rect.top - tooltip.offsetHeight - 10 >= 0) {
+                            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+                        } else if (parseFloat(tooltip.style.top) + tooltip.offsetHeight > window.innerHeight) {
+                            // If it still doesn't fit above, just position it at the bottom of the viewport
+                            tooltip.style.top = `${window.innerHeight - tooltip.offsetHeight}px`;
+                        }
+
+                        currentActiveStep = step;
+                    }
                 });
             });
+
+            // Hide tooltip if clicking anywhere else on the document OR pressing Escape
+            document.addEventListener('click', (e) => {
+                let clickedInsideStep = false;
+                cycleSteps.forEach(step => {
+                    if (step.contains(e.target)) {
+                        clickedInsideStep = true;
+                    }
+                });
+
+                if (!tooltip.classList.contains('hidden') && !tooltip.contains(e.target) && !clickedInsideStep) {
+                    tooltip.classList.add('hidden');
+                    currentActiveStep = null;
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (!tooltip.classList.contains('hidden')) {
+                        tooltip.classList.add('hidden');
+                        currentActiveStep = null;
+                    }
+                }
+            });
+
 
             const navLinks = document.querySelectorAll('nav a.nav-link');
             const sections = document.querySelectorAll('main section');

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Report: Air Travel Accessibility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a single-page dashboard with a sticky top navigation for easy exploration. The structure is thematic, not linear, to allow users to jump to sections of interest: 1. A 'Big Picture' hero section with key stats for immediate impact. 2. A 'Demand & Growth' section using interactive charts to visualize trends. 3. A 'Key Challenges' section that uses a visual diagram and data callouts to explain systemic issues like the outsourcing cycle and mishandled aids. 4. A 'Market Opportunity' section to frame the problem as a business case. 5. 'Recommendations' presented in an accordion for concise display. This structure was chosen to transform a dense report into a digestible, engaging narrative, guiding the user from understanding the market's scale to recognizing the actionable solutions. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Global/US/UK disabled traveler numbers. Goal: Inform/Compare. Viz: Interactive data cards & a line chart (Chart.js). Interaction: Hover effects, tooltips. Justification: Quickly conveys scale and change over time.
+        - Report Info: Breakdown of assistance types. Goal: Organize/Proportion. Viz: Doughnut chart (Chart.js). Interaction: Tooltips on segments. Justification: Clearly shows the large proportion of "less mobile/elderly" requests.
+        - Report Info: Prevalence of non-visible disabilities. Goal: Inform/Surprise. Viz: Donut chart. Interaction: Tooltips. Justification: Highlights the hidden majority of disabilities, a key report insight.
+        - Report Info: Systemic issues (outsourcing, low wages). Goal: Explain Relationships. Viz: HTML/CSS diagram. Interaction: Hover over steps. Justification: Visually simplifies a complex, cyclical problem.
+        - Report Info: High complaint volumes & fear of travel. Goal: Emphasize Impact. Viz: Large data callouts with icons (HTML/CSS). Interaction: Static, high-impact visuals. Justification: Creates a strong impression of the severity of the issues.
+        - Report Info: Recommendations. Goal: Organize/Summarize. Viz: Accordion UI. Interaction: Click to expand. Justification: Condenses detailed text into a manageable format.
+        Library/Method: All charts use Chart.js (Canvas). All diagrams and icons use HTML/CSS/Unicode. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 350px; max-height: 400px; }
+        @media (max-width: 768px) { .chart-container { height: 300px; max-height: 350px; } }
+        .nav-link { transition: color 0.3s, border-bottom-color 0.3s; }
+        .nav-link.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl font-bold text-gray-900">Air Travel Accessibility</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#big-picture" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 border-b-2 border-transparent">The Big Picture</a>
+                        <a href="#demand" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 border-b-2 border-transparent">Demand & Growth</a>
+                        <a href="#challenges" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 border-b-2 border-transparent">Key Challenges</a>
+                        <a href="#opportunity" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 border-b-2 border-transparent">The Opportunity</a>
+                        <a href="#recommendations" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 border-b-2 border-transparent">Recommendations</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="#big-picture">The Big Picture</option>
+                        <option value="#demand">Demand & Growth</option>
+                        <option value="#challenges">Key Challenges</option>
+                        <option value="#opportunity">The Opportunity</option>
+                        <option value="#recommendations">Recommendations</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+
+        <section id="big-picture" class="scroll-mt-20 text-center mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">A Significant & Growing Market</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-10">The population of air travelers with disabilities is a substantial, global demographic. While millions fly, a vast number do not, representing a major untapped opportunity for the aviation industry if accessibility barriers are removed.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                <div class="stat-card bg-white p-6 rounded-xl shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-blue-600 mb-2">1.3+ Billion</h3>
+                    <p class="text-gray-700 font-semibold">People Globally with a Disability</p>
+                    <p class="text-sm text-gray-500 mt-1">Approximately 16% of the world's population.</p>
+                </div>
+                <div class="stat-card bg-white p-6 rounded-xl shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-blue-600 mb-2">26 Million</h3>
+                    <p class="text-gray-700 font-semibold">US Travelers with Disabilities (2022)</p>
+                    <p class="text-sm text-gray-500 mt-1">Nearly recovered to pre-pandemic levels of 27 million.</p>
+                </div>
+                <div class="stat-card bg-white p-6 rounded-xl shadow-md transition-all duration-300">
+                    <h3 class="text-4xl font-bold text-blue-600 mb-2">3.45 Million</h3>
+                    <p class="text-gray-700 font-semibold">UK Passengers Received Assistance (2022)</p>
+                    <p class="text-sm text-gray-500 mt-1">Represents 1.56% of all UK passengers.</p>
+                </div>
+            </div>
+             <div class="mt-16">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">The Reality of Non-Visible Disabilities</h3>
+                <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-8">A critical insight from the report is that most disabilities are not immediately apparent. This means current assistance data, which leans towards visible mobility needs, likely underestimates the true demand for accessible travel solutions.</p>
+                <div class="chart-container">
+                    <canvas id="invisibleDisabilityChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 md:my-24 border-gray-200">
+
+        <section id="demand" class="scroll-mt-20 mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">Surging Demand for Assistance</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">The need for airport assistance is not just growing; it's accelerating. This trend is driven by an aging population, post-pandemic travel shifts, and a rise in leisure trips. Understanding the composition of these requests is key to providing the right support.</p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">UK Assistance Growth</h3>
+                     <p class="text-center text-gray-600 mb-4">The number of passengers receiving assistance in the UK has shown a marked and significant increase over the last decade.</p>
+                    <div class="chart-container">
+                        <canvas id="ukAssistanceChart"></canvas>
+                    </div>
+                </div>
+                <div>
+                     <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">Breakdown of UK Assistance (2022)</h3>
+                     <p class="text-center text-gray-600 mb-4">The vast majority of requests are for general mobility support, not necessarily for complex physical needs, highlighting a need for varied service offerings.</p>
+                    <div class="chart-container">
+                        <canvas id="assistanceTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-12 bg-blue-50 border-l-4 border-blue-500 text-blue-900 p-6 rounded-lg">
+                <h4 class="font-bold text-lg">A 30% Annual Increase in Wheelchair Requests</h4>
+                <p class="mt-2">Globally, airlines report a 30% yearly increase in wheelchair assistance. The report notes this doesn't just mean more traditional wheelchair users. It includes a broader group—like the elderly or those with navigational challenges—who use this service for general mobility support in complex airport environments. This suggests a need for more nuanced service options beyond a one-size-fits-all approach.</p>
+            </div>
+        </section>
+
+        <hr class="my-16 md:my-24 border-gray-200">
+
+        <section id="challenges" class="scroll-mt-20 mb-16 md:mb-24">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">Persistent & Systemic Challenges</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">Despite regulations, passengers with disabilities face severe and frequent issues. These are not isolated incidents but symptoms of deeper, systemic problems in how assistance services are managed and delivered.</p>
+            
+            <div class="bg-white p-8 rounded-xl shadow-lg mb-12">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">The Vicious Cycle of Outsourced Services</h3>
+                <p class="text-center text-gray-600 mb-8">The report identifies a critical cycle where cost-cutting leads directly to poor service, undermining passenger safety and dignity. Hover over each step to learn more.</p>
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="cycle-step text-center p-4 relative" data-text="Airlines outsource assistance to the lowest bidder to cut costs.">
+                        <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Outsourcing & Cost Pressure</div>
+                    </div>
+                    <div class="text-3xl text-red-400 font-bold hidden md:block">&rarr;</div>
+                    <div class="text-3xl text-red-400 font-bold md:hidden">&darr;</div>
+                    <div class="cycle-step text-center p-4 relative" data-text="Low-bid contracts result in low wages and poor benefits for frontline staff.">
+                         <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Low Wages & High Turnover</div>
+                    </div>
+                    <div class="text-3xl text-red-400 font-bold hidden md:block">&rarr;</div>
+                    <div class="text-3xl text-red-400 font-bold md:hidden">&darr;</div>
+                    <div class="cycle-step text-center p-4 relative" data-text="High turnover and lack of investment lead to undertrained and understaffed teams.">
+                         <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Inadequate Training</div>
+                    </div>
+                    <div class="text-3xl text-red-400 font-bold hidden md:block">&rarr;</div>
+                     <div class="text-3xl text-red-400 font-bold md:hidden">&darr;</div>
+                    <div class="cycle-step text-center p-4 relative" data-text="This results in unsafe assistance, damaged equipment, and a high volume of complaints.">
+                         <div class="w-32 h-32 bg-red-100 rounded-full flex items-center justify-center text-center font-semibold text-red-800 p-2">Poor Service & Passenger Harm</div>
+                    </div>
+                </div>
+                <div id="cycle-tooltip" class="hidden absolute bg-gray-800 text-white text-sm rounded py-2 px-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Mishandled Mobility Aids</h3>
+                    <p class="text-gray-600 mb-4">Damage to wheelchairs and scooters is a severe and frequent problem, causing devastating consequences for travelers' independence and well-being. This is a primary reason people with disabilities avoid flying.</p>
+                    <div class="flex items-center bg-red-50 p-4 rounded-lg">
+                         <span class="text-5xl mr-4">&#128718;</span>
+                        <div>
+                           <p class="text-2xl font-bold text-red-700">1 in 100</p>
+                           <p class="text-red-900">Wheelchairs or scooters are damaged, delayed, or lost on US domestic flights.</p>
+                        </div>
+                    </div>
+                     <p class="text-sm text-gray-500 mt-4">Systemic issues like incompatible equipment design, airport infrastructure flaws, and poor information exchange contribute significantly to this problem.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Top Complaint Categories (US, 2022)</h3>
+                    <p class="text-gray-600 mb-4">Complaint data clearly shows where the most critical service failures occur, with inadequate wheelchair assistance being the dominant issue.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-1/2 bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">48%</div>
+                            <div class="w-1/2 bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Failure to Provide Adequate Wheelchair Assistance</div>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="w-[10%] bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">10%</div>
+                            <div class="w-[90%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Mishandling of Assistive Devices</div>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="w-[42%] bg-blue-500 h-8 rounded-l-md flex items-center justify-center text-white font-bold">42%</div>
+                            <div class="w-[58%] bg-blue-100 h-8 rounded-r-md pl-2 flex items-center text-sm text-blue-900">Other (e.g., seating, communication)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="my-16 md:my-24 border-gray-200">
+
+        <section id="opportunity" class="scroll-mt-20 text-center mb-16 md:mb-24">
+             <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">A Clear Market Opportunity</h2>
+             <p class="max-w-3xl mx-auto text-lg text-gray-600 mb-10">Addressing these challenges is not just about compliance; it's a significant business opportunity. A large, eager market of travelers is waiting for the industry to provide safe, reliable, and dignified accessible travel.</p>
+             <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg text-left">
+                     <h3 class="text-2xl font-bold text-green-800 mb-2">76%</h3>
+                     <p class="text-green-900 font-semibold">Of non-flying individuals with disabilities would fly "at least a few times a year" if their concerns were addressed.</p>
+                 </div>
+                 <div class="bg-green-50 border-l-4 border-green-500 p-6 rounded-lg text-left">
+                     <h3 class="text-2xl font-bold text-green-800 mb-2">84%</h3>
+                     <p class="text-green-900 font-semibold">Of current flyers with disabilities would travel "much more frequently" with improved access.</p>
+                 </div>
+             </div>
+             <p class="mt-8 text-gray-600 max-w-3xl mx-auto">By moving from reluctant non-flyers to frequent, loyal customers, this demographic can drive substantial market growth. Airlines and airports that lead in accessibility can gain a powerful competitive advantage.</p>
+        </section>
+
+        <hr class="my-16 md:my-24 border-gray-200">
+
+        <section id="recommendations" class="scroll-mt-20">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">Pathways to Progress</h2>
+            <p class="max-w-3xl mx-auto text-lg text-center text-gray-600 mb-12">The report concludes with clear, actionable recommendations for regulators and the aviation industry to create a truly accessible travel experience for all.</p>
+            <div class="max-w-4xl mx-auto space-y-4" id="accordion-container">
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        1. Prioritize Systemic Investment in Assistance Services
+                        <span class="accordion-icon text-2xl font-thin">+</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4 text-gray-600">
+                        <p>Move beyond reactive measures. Proactively invest in accessibility services by ensuring fair wages, comprehensive benefits, and continuous, high-quality training for frontline staff. Re-evaluate outsourcing models to prioritize service quality and passenger dignity over simple cost-cutting.</p>
+                    </div>
+                </div>
+                 <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                       2. Enhance Data & Awareness for Non-Visible Disabilities
+                        <span class="accordion-icon text-2xl font-thin">+</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4 text-gray-600">
+                        <p>Implement better methods to identify and understand the needs of passengers with non-visible disabilities. Launch awareness campaigns, create empathetic communication channels, and train staff to recognize and support non-apparent needs, rather than only responding to explicit requests for assistance.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        3. Address Mobility Aid Mishandling via Collaboration
+                        <span class="accordion-icon text-2xl font-thin">+</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4 text-gray-600">
+                        <p>Collaborate with mobility aid manufacturers on "air transport-friendly" designs, invest in airport infrastructure for safer loading, and establish standardized information exchange protocols (e.g., electronic mobility aid tags). Enforce regulations that make mishandling a "per se violation" to ensure systemic accountability.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        4. Improve Communication and Information Accessibility
+                         <span class="accordion-icon text-2xl font-thin">+</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4 text-gray-600">
+                        <p>Ensure all essential flight and airport information is available in multiple formats (visual, audio, clear signage). Simplify online processes for requesting accommodations and proactively inform passengers about the full range of available services.</p>
+                    </div>
+                </div>
+                <div class="accordion-item bg-white rounded-lg shadow-md">
+                    <button class="accordion-header w-full text-left p-4 font-semibold text-lg flex justify-between items-center">
+                        5. Focus on Building Passenger Confidence
+                         <span class="accordion-icon text-2xl font-thin">+</span>
+                    </button>
+                    <div class="accordion-content px-4 pb-4 text-gray-600">
+                        <p>Recognize that service quality, consistency, and clear communication are paramount. By turning hesitant travelers into confident, frequent flyers, the industry can unlock significant market growth and build lasting loyalty within this vital segment.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2024 Interactive Report on Air Travel Accessibility. All data sourced from the provided research report.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            Chart.defaults.font.family = "'Inter', sans-serif";
+
+            const invisibleDisabilityCtx = document.getElementById('invisibleDisabilityChart').getContext('2d');
+            new Chart(invisibleDisabilityCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Non-Visible Disabilities', 'Visible Disabilities'],
+                    datasets: [{
+                        label: 'Prevalence of Disability Types',
+                        data: [80, 20],
+                        backgroundColor: ['#60a5fa', '#dbeafe'],
+                        borderColor: ['#3b82f6', '#bfdbfe'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: false,
+                            text: '80% of disabilities are not immediately apparent'
+                        }
+                    }
+                }
+            });
+
+            const ukAssistanceCtx = document.getElementById('ukAssistanceChart').getContext('2d');
+            new Chart(ukAssistanceCtx, {
+                type: 'line',
+                data: {
+                    labels: ['2010', '2015', '2019', '2022'],
+                    datasets: [{
+                        label: 'Passengers Receiving Assistance in UK (Millions)',
+                        data: [1.85, 2.7, null, 3.45], 
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#3b82f6'
+                    },{
+                        label: '% of All Passengers',
+                        data: [0.94, null, 1.35, 1.56],
+                        yAxisID: 'y1',
+                        borderColor: '#9ca3af',
+                        backgroundColor: 'rgba(156, 163, 175, 0.1)',
+                        tension: 0.3,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#9ca3af'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                     scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Passengers (Millions)' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: { display: true, text: '% of All Passengers' },
+                             grid: { drawOnChartArea: false }
+                        }
+                    },
+                    plugins: {
+                        tooltip: { mode: 'index', intersect: false }
+                    }
+                }
+            });
+
+            const assistanceTypeCtx = document.getElementById('assistanceTypeChart').getContext('2d');
+            new Chart(assistanceTypeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Less Mobile / Elderly', 'Complex Physical Needs', 'Blind, Deaf, or Non-Visible'],
+                    datasets: [{
+                        label: 'Breakdown of Assistance',
+                        data: [88, 6, 6],
+                        backgroundColor: ['#60a5fa', '#f87171', '#fbbf24'],
+                        borderColor: ['#3b82f6', '#dc2626', '#f59e0b'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const accordionContainer = document.getElementById('accordion-container');
+            if (accordionContainer) {
+                accordionContainer.addEventListener('click', function(e) {
+                    const header = e.target.closest('.accordion-header');
+                    if (!header) return;
+
+                    const item = header.parentElement;
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('.accordion-icon');
+
+                    item.classList.toggle('open');
+                    
+                    if (item.classList.contains('open')) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.textContent = '-';
+                    } else {
+                        content.style.maxHeight = '0';
+                        icon.textContent = '+';
+                    }
+                });
+            }
+
+            const cycleSteps = document.querySelectorAll('.cycle-step');
+            const tooltip = document.getElementById('cycle-tooltip');
+            cycleSteps.forEach(step => {
+                step.addEventListener('mouseenter', (e) => {
+                    tooltip.textContent = step.dataset.text;
+                    tooltip.classList.remove('hidden');
+                    const rect = step.getBoundingClientRect();
+                    tooltip.style.left = `${rect.left + window.scrollX + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+                    tooltip.style.top = `${rect.bottom + window.scrollY + 10}px`;
+                });
+                step.addEventListener('mouseleave', () => {
+                    tooltip.classList.add('hidden');
+                });
+            });
+
+            const navLinks = document.querySelectorAll('nav a.nav-link');
+            const sections = document.querySelectorAll('main section');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            function changeActiveLink() {
+                let index = sections.length;
+                while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
+                navLinks.forEach((link) => link.classList.remove('active'));
+                if(navLinks[index]) {
+                  navLinks[index].classList.add('active');
+                }
+            }
+
+            changeActiveLink();
+            window.addEventListener('scroll', changeActiveLink);
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.querySelector(link.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            mobileNav.addEventListener('change', (e) => {
+                const targetId = e.target.value;
+                document.querySelector(targetId).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
